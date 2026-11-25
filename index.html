@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AJUDA AGORA - QUEBRADA | Quem precisa não pode esperar</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Archivo Black para títulos fortes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome para ícones nítidos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        quebrada: {
+                            black: '#0A0A0A',
+                            card: '#161616',
+                            border: '#2A2A2A',
+                            orange: '#FF5F00',
+                            orangeHover: '#E05300',
+                            yellow: '#FFD600',
+                            yellowHover: '#E6C000',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Archivo Black', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos customizados para alto contraste, barras e transições suaves */
+        body {
+            background-color: #0A0A0A;
+            color: #FFFFFF;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .page-section {
+            display: none;
+            animation: fadeIn 0.25s ease-in-out;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Pulso de urgência */
+        @keyframes pulseUrgent {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.45; }
+        }
+        .animate-urgent {
+            animation: pulseUrgent 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A0A0A;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2A2A2A;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FF5F00;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-quebrada-orange selection:text-white">
+
+    <!-- NOTIFICAÇÃO FLUTUANTE (Substituto seguro para alert) -->
+    <div id="toast-notification" class="fixed bottom-5 right-5 left-5 sm:left-auto sm:w-96 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-quebrada-yellow text-quebrada-black font-extrabold px-5 py-4 rounded-2xl shadow-2xl border-2 border-black flex items-center gap-3">
+            <i class="fa-solid fa-circle-check text-2xl"></i>
+            <span id="toast-message" class="text-sm sm:text-base leading-tight">Ação realizada com sucesso!</span>
+        </div>
+    </div>
+
+    <!-- BARRA DE NAVEGAÇÃO SUPERIOR FIXA -->
+    <header class="sticky top-0 z-40 bg-quebrada-black/95 backdrop-blur-md border-b-2 border-quebrada-border">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo / Identidade -->
+                <button onclick="navigateTo('home')" class="flex items-center gap-3 text-left group focus:outline-none">
+                    <div class="w-12 h-11 px-1.5 rounded-xl bg-quebrada-orange flex items-center justify-center text-quebrada-black font-display text-base sm:text-lg tracking-tighter shadow-lg group-hover:bg-quebrada-yellow transition-colors select-none">
+                        SoS
+                    </div>
+                    <div>
+                        <span class="font-display text-lg sm:text-xl tracking-tight text-white block leading-none">AJUDA AGORA</span>
+                        <span class="text-xs sm:text-sm font-black tracking-widest text-quebrada-yellow uppercase block mt-0.5">QUEBRADA</span>
+                    </div>
+                </button>
+
+                <!-- Menu Desktop (5 Páginas exatas) -->
+                <nav class="hidden lg:flex items-center gap-1.5" aria-label="Menu Principal">
+                    <button onclick="navigateTo('home')" data-nav="home" class="nav-btn px-3.5 py-2.5 rounded-xl text-sm font-extrabold transition-all bg-quebrada-orange text-black">
+                        Início
+                    </button>
+                    <button onclick="navigateTo('sos')" data-nav="sos" class="nav-btn px-3.5 py-2.5 rounded-xl text-sm font-extrabold text-gray-200 hover:bg-quebrada-card hover:text-quebrada-orange transition-all flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-quebrada-orange animate-urgent"></span>
+                        SOS Urgente
+                    </button>
+                    <button onclick="navigateTo('sonhos')" data-nav="sonhos" class="nav-btn px-3.5 py-2.5 rounded-xl text-sm font-extrabold text-gray-200 hover:bg-quebrada-card hover:text-quebrada-yellow transition-all">
+                        Adote um Sonho
+                    </button>
+                    <button onclick="navigateTo('transparencia')" data-nav="transparencia" class="nav-btn px-3.5 py-2.5 rounded-xl text-sm font-extrabold text-quebrada-yellow border border-quebrada-yellow/40 hover:bg-quebrada-yellow hover:text-black transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        Transparência
+                    </button>
+                    <button onclick="navigateTo('participar')" data-nav="participar" class="nav-btn px-4 py-2.5 rounded-xl text-sm font-black bg-white text-black hover:bg-quebrada-yellow transition-all ml-1">
+                        Ajudar / Pedir
+                    </button>
+                    <button onclick="navigateTo('pedidos')" data-nav="pedidos" class="nav-btn px-3.5 py-2.5 rounded-xl text-sm font-extrabold text-gray-300 border border-quebrada-border hover:border-quebrada-orange hover:text-quebrada-orange transition-all flex items-center gap-1.5 ml-1" title="Acesso restrito à equipe">
+                        <i class="fa-solid fa-lock text-xs text-quebrada-yellow"></i>
+                        <span>Pedidos de Ajuda</span>
+                    </button>
+                </nav>
+
+                <!-- Botão Menu Mobile -->
+                <div class="flex items-center gap-2 lg:hidden">
+                    <button onclick="navigateTo('transparencia')" class="px-3 py-2 rounded-xl text-xs font-black bg-quebrada-card text-quebrada-yellow border border-quebrada-yellow/50">
+                        <i class="fa-solid fa-shield-halved mr-1"></i>Contas
+                    </button>
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="p-3 rounded-xl bg-quebrada-card border border-quebrada-border text-white hover:border-quebrada-orange focus:outline-none" aria-label="Abrir Menu">
+                        <i id="mobile-menu-icon" class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Dropdown Mobile -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-quebrada-card border-b-2 border-quebrada-orange px-4 pt-2 pb-5 space-y-2">
+            <button onclick="navigateTo('home'); toggleMobileMenu()" data-nav="home" class="nav-btn-mobile w-full text-left px-4 py-3.5 rounded-xl text-base font-extrabold bg-quebrada-orange text-black flex items-center justify-between">
+                <span>1. Página Inicial - Home</span>
+                <i class="fa-solid fa-house"></i>
+            </button>
+            <button onclick="navigateTo('sos'); toggleMobileMenu()" data-nav="sos" class="nav-btn-mobile w-full text-left px-4 py-3.5 rounded-xl text-base font-extrabold text-white hover:bg-quebrada-black flex items-center justify-between">
+                <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-quebrada-orange animate-urgent"></span>2. SOS Urgente</span>
+                <i class="fa-solid fa-truck-medical text-quebrada-orange"></i>
+            </button>
+            <button onclick="navigateTo('sonhos'); toggleMobileMenu()" data-nav="sonhos" class="nav-btn-mobile w-full text-left px-4 py-3.5 rounded-xl text-base font-extrabold text-white hover:bg-quebrada-black flex items-center justify-between">
+                <span>3. Adote um Sonho</span>
+                <i class="fa-solid fa-star text-quebrada-yellow"></i>
+            </button>
+            <button onclick="navigateTo('transparencia'); toggleMobileMenu()" data-nav="transparencia" class="nav-btn-mobile w-full text-left px-4 py-3.5 rounded-xl text-base font-extrabold text-quebrada-yellow border border-quebrada-yellow/40 hover:bg-quebrada-black flex items-center justify-between">
+                <span>4. Transparência (Prestação de Contas)</span>
+                <i class="fa-solid fa-shield-halved"></i>
+            </button>
+            <button onclick="navigateTo('participar'); toggleMobileMenu()" data-nav="participar" class="nav-btn-mobile w-full text-left px-4 py-3.5 rounded-xl text-base font-black bg-white text-black flex items-center justify-between">
+                <span>5. Quero Ajudar / Preciso de Ajuda</span>
+                <i class="fa-solid fa-hand-holding-heart"></i>
+            </button>
+            <button onclick="navigateTo('pedidos'); toggleMobileMenu()" data-nav="pedidos" class="nav-btn-mobile w-full text-left px-4 py-3.5 rounded-xl text-base font-extrabold text-quebrada-yellow bg-quebrada-black border border-quebrada-border flex items-center justify-between">
+                <span class="flex items-center gap-2"><i class="fa-solid fa-lock text-sm"></i>6. Pedidos de Ajuda (Equipe)</span>
+                <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL (SPA - 5 PÁGINAS) -->
+    <main class="flex-grow">
+
+        <!-- =========================================================
+             PÁGINA 1: PÁGINA INICIAL - HOME
+        ========================================================== -->
+        <section id="page-home" class="page-section active">
+            <!-- Hero Section -->
+            <div class="relative overflow-hidden border-b border-quebrada-border bg-gradient-to-b from-quebrada-card to-quebrada-black">
+                <div class="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
+                    <!-- Badge Slogan -->
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-quebrada-yellow/15 border border-quebrada-yellow text-quebrada-yellow text-xs sm:text-sm font-extrabold uppercase tracking-wide mb-6">
+                        <i class="fa-solid fa-fire"></i>
+                        <span>Quem precisa não pode esperar. Ajude hoje, mude hoje.</span>
+                    </div>
+
+                    <!-- Título & Texto Exato Solicitado -->
+                    <h1 class="font-display text-4xl sm:text-6xl lg:text-7xl text-white leading-[1.08] tracking-tight mb-6">
+                        Aqui <span class="text-quebrada-orange underline decoration-quebrada-yellow decoration-4 underline-offset-8">ninguém</span> espera.
+                    </h1>
+
+                    <p class="text-lg sm:text-2xl text-gray-200 font-semibold leading-relaxed max-w-3xl mb-10">
+                        Na quebrada, a fome não espera o fim do mês. O remédio não espera o salário. O sonho não espera o ano que vem. 
+                        <span class="text-white font-extrabold">O Ajuda Agora conecta quem precisa com quem pode ajudar, em tempo real.</span>
+                    </p>
+
+                    <!-- Dois Botões Grandes e Chamativos -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
+                        <button onclick="navigateTo('sos')" class="w-full py-5 px-6 rounded-2xl bg-quebrada-orange hover:bg-quebrada-orangeHover text-black font-black text-lg sm:text-xl uppercase tracking-wide shadow-lg shadow-quebrada-orange/25 transition-all transform active:scale-95 flex items-center justify-center gap-3">
+                            <i class="fa-solid fa-hand-holding-dollar text-2xl"></i>
+                            <span>QUERO AJUDAR AGORA</span>
+                        </button>
+                        <button onclick="navigateTo('participar', 'preciso')" class="w-full py-5 px-6 rounded-2xl bg-quebrada-card hover:bg-neutral-800 text-white border-2 border-quebrada-yellow font-black text-lg sm:text-xl uppercase tracking-wide transition-all transform active:scale-95 flex items-center justify-center gap-3">
+                            <i class="fa-solid fa-bullhorn text-2xl text-quebrada-yellow"></i>
+                            <span>PRECISO DE AJUDA</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid de 4 Contadores em Destaque -->
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 -mt-6 sm:-mt-8 relative z-10">
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+                    <div class="bg-quebrada-card border-2 border-quebrada-border p-5 sm:p-6 rounded-2xl shadow-xl">
+                        <div class="text-quebrada-orange text-2xl mb-2"><i class="fa-solid fa-people-roof"></i></div>
+                        <div class="font-display text-3xl sm:text-4xl text-white">128</div>
+                        <div class="text-sm sm:text-base font-bold text-gray-300 mt-1">famílias ajudadas</div>
+                    </div>
+                    <div class="bg-quebrada-card border-2 border-quebrada-border p-5 sm:p-6 rounded-2xl shadow-xl">
+                        <div class="text-quebrada-yellow text-2xl mb-2"><i class="fa-solid fa-graduation-cap"></i></div>
+                        <div class="font-display text-3xl sm:text-4xl text-white">42</div>
+                        <div class="text-sm sm:text-base font-bold text-gray-300 mt-1">sonhos realizados</div>
+                    </div>
+                    <div class="bg-quebrada-card border-2 border-quebrada-border p-5 sm:p-6 rounded-2xl shadow-xl">
+                        <div class="text-quebrada-orange text-2xl mb-2"><i class="fa-solid fa-pix"></i></div>
+                        <div class="font-display text-2xl sm:text-3xl lg:text-4xl text-quebrada-yellow">R$ 18.450</div>
+                        <div class="text-sm sm:text-base font-bold text-gray-300 mt-1">arrecadados</div>
+                    </div>
+                    <div class="bg-quebrada-card border-2 border-quebrada-orange/60 p-5 sm:p-6 rounded-2xl shadow-xl">
+                        <div class="text-quebrada-yellow text-2xl mb-2"><i class="fa-solid fa-stopwatch"></i></div>
+                        <div class="font-display text-3xl sm:text-4xl text-white">4 horas</div>
+                        <div class="text-sm sm:text-base font-bold text-gray-300 mt-1">Tempo médio de ajuda</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Explicação das 2 Frentes do Projeto -->
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 py-14 sm:py-16">
+                <div class="text-center max-w-2xl mx-auto mb-10">
+                    <h2 class="font-display text-2xl sm:text-4xl text-white mb-3">Duas frentes. Direto ao ponto.</h2>
+                    <p class="text-base sm:text-lg text-gray-300 font-medium">Sem burocracia e sem intermediários distantes. Escolha como transformar o dia de alguém hoje:</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Card Frente 1: SOS Urgente -->
+                    <div class="bg-quebrada-card border-2 border-quebrada-orange rounded-3xl p-6 sm:p-8 flex flex-col justify-between">
+                        <div>
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-quebrada-orange text-black font-black text-xs uppercase mb-4">
+                                <span class="w-2 h-2 rounded-full bg-black animate-ping"></span>
+                                Emergência Agora
+                            </div>
+                            <h3 class="font-display text-2xl sm:text-3xl text-white mb-3">1. SOS URGENTE</h3>
+                            <p class="text-gray-200 text-base sm:text-lg leading-relaxed mb-6">
+                                Pra quem precisa de ajuda <strong class="text-quebrada-orange">AGORA</strong> — cesta básica, remédio de uso contínuo, roupa, gás ou abrigo depois de enchente. Acompanhe a barra até bater 100%.
+                            </p>
+                        </div>
+                        <button onclick="navigateTo('sos')" class="w-full py-4 px-5 rounded-xl bg-quebrada-orange hover:bg-quebrada-orangeHover text-black font-black text-base uppercase transition-colors flex items-center justify-center gap-2">
+                            <span>Ver Pedidos Urgentes</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Card Frente 2: Adote um Sonho -->
+                    <div class="bg-quebrada-card border-2 border-quebrada-yellow rounded-3xl p-6 sm:p-8 flex flex-col justify-between">
+                        <div>
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-quebrada-yellow text-black font-black text-xs uppercase mb-4">
+                                <i class="fa-solid fa-star"></i>
+                                Futuro na Quebrada
+                            </div>
+                            <h3 class="font-display text-2xl sm:text-3xl text-white mb-3">2. ADOTE UM SONHO</h3>
+                            <p class="text-gray-200 text-base sm:text-lg leading-relaxed mb-6">
+                                Pra quem precisa de uma ajuda pequena pra mudar de vida — pagar inscrição do vestibular, comprar material, um tênis pra correr ou passagem pra entrevista de emprego.
+                            </p>
+                        </div>
+                        <button onclick="navigateTo('sonhos')" class="w-full py-4 px-5 rounded-xl bg-quebrada-yellow hover:bg-quebrada-yellowHover text-black font-black text-base uppercase transition-colors flex items-center justify-center gap-2">
+                            <span>Conhecer os Sonhos</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Prévia Rápida de Urgência na Home -->
+                <div class="mt-12 bg-quebrada-card border border-quebrada-border rounded-3xl p-6 sm:p-8">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                        <div>
+                            <span class="text-quebrada-orange font-black text-xs uppercase tracking-wider">Falta pouco para fechar!</span>
+                            <h3 class="font-display text-xl sm:text-2xl text-white">Caso mais urgente neste momento</h3>
+                        </div>
+                        <button onclick="navigateTo('sos')" class="text-quebrada-yellow font-extrabold text-sm underline hover:text-white self-start sm:self-auto">
+                            Ver todos os casos SOS &rarr;
+                        </button>
+                    </div>
+
+                    <div class="bg-quebrada-black border border-quebrada-orange/50 rounded-2xl p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                        <div class="space-y-2 flex-1">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="px-2.5 py-1 rounded-md bg-quebrada-orange text-black font-black text-xs uppercase">URGENTE</span>
+                                <span class="text-white font-extrabold text-lg">Dona Maria, 62 anos — Mauá - SP</span>
+                            </div>
+                            <p class="text-gray-300 text-base"><strong>Precisa:</strong> 2 cestas básicas e remédio de pressão (Meta: R$ 250)</p>
+                            <div class="pt-2">
+                                <div class="flex justify-between text-sm font-extrabold mb-1.5">
+                                    <span class="text-quebrada-yellow">80% alcançado</span>
+                                    <span class="text-quebrada-orange">Falta apenas R$ 50</span>
+                                </div>
+                                <div class="w-full h-4 bg-neutral-800 rounded-full overflow-hidden p-0.5 border border-neutral-700">
+                                    <div class="h-full bg-gradient-to-r from-quebrada-orange to-quebrada-yellow rounded-full" style="width: 80%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
+                            <button onclick="openPixModal('Dona Maria (Mauá - SP)', '2 cestas básicas e remédio de pressão', 'R$ 50 restantes')" class="px-6 py-3.5 rounded-xl bg-quebrada-orange hover:bg-quebrada-orangeHover text-black font-black text-sm uppercase transition-colors">
+                                Completar os R$ 50
+                            </button>
+                            <button onclick="copyPixKey()" class="px-6 py-3 rounded-xl bg-quebrada-card hover:bg-neutral-800 text-white border border-quebrada-border font-bold text-sm flex items-center justify-center gap-2">
+                                <i class="fa-regular fa-copy text-quebrada-yellow"></i>
+                                <span>Copiar Pix</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             PÁGINA 2: SOS URGENTE
+        ========================================================== -->
+        <section id="page-sos" class="page-section">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+                <!-- Cabeçalho da Página -->
+                <div class="mb-10">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-quebrada-orange text-black font-black text-xs uppercase tracking-wider mb-3">
+                        <span class="w-2 h-2 rounded-full bg-black animate-ping"></span>
+                        Ajuda Imediata
+                    </div>
+                    <h1 class="font-display text-3xl sm:text-5xl text-white mb-4">SOS URGENTE</h1>
+                    <p class="text-lg sm:text-xl text-gray-300 max-w-3xl">
+                        Quando a necessidade bate à porta hoje. Cada real doado vai direto para resolver o pedido e você acompanha tudo aqui.
+                    </p>
+                </div>
+
+                <!-- Explicação Visual em 3 Passos -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+                    <div class="bg-quebrada-card border border-quebrada-border p-5 rounded-2xl flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-quebrada-orange text-black font-black text-lg flex items-center justify-center shrink-0">1</div>
+                        <div>
+                            <h3 class="font-extrabold text-white text-base mb-1">Pedido Real com Foto</h3>
+                            <p class="text-sm text-gray-300">A pessoa posta o que precisa, com foto e endereço validado pela rede da quebrada.</p>
+                        </div>
+                    </div>
+                    <div class="bg-quebrada-card border border-quebrada-border p-5 rounded-2xl flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-quebrada-yellow text-black font-black text-lg flex items-center justify-center shrink-0">2</div>
+                        <div>
+                            <h3 class="font-extrabold text-white text-base mb-1">Barra em Tempo Real</h3>
+                            <p class="text-sm text-gray-300">O site mostra a barra subindo ao vivo: <em>"Já conseguimos 80%"</em>.</p>
+                        </div>
+                    </div>
+                    <div class="bg-quebrada-card border border-quebrada-border p-5 rounded-2xl flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-400 text-black font-black text-lg flex items-center justify-center shrink-0"><i class="fa-solid fa-check"></i></div>
+                        <div>
+                            <h3 class="font-extrabold text-white text-base mb-1">100% Vira RESOLVIDO</h3>
+                            <p class="text-sm text-gray-300">Bateu a meta, compramos na hora e postamos a foto da entrega feita.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chave Pix Oficial em Destaque -->
+                <div class="bg-quebrada-card border-2 border-quebrada-yellow rounded-2xl p-5 mb-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div>
+                        <span class="text-xs font-black uppercase text-quebrada-yellow tracking-wider">Chave Pix Oficial do Projeto (E-mail)</span>
+                        <p id="official-pix-key" class="font-mono text-base sm:text-xl font-bold text-white mt-0.5 break-all">ajudaagora.quebrada@pix.com.br</p>
+                    </div>
+                    <button onclick="copyPixKey()" class="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-quebrada-yellow hover:bg-quebrada-yellowHover text-black font-black text-sm uppercase flex items-center justify-center gap-2 shrink-0 transition-transform active:scale-95">
+                        <i class="fa-regular fa-copy text-lg"></i>
+                        <span>Copiar Chave Pix</span>
+                    </button>
+                </div>
+
+                <!-- Lista de Cards SOS -->
+                <div class="space-y-6">
+                    <!-- EXEMPLO 1 - URGENTE -->
+                    <article class="bg-quebrada-card border-2 border-quebrada-orange rounded-3xl overflow-hidden shadow-xl">
+                        <div class="grid grid-cols-1 lg:grid-cols-12">
+                            <!-- Área Visual Autentica -->
+                            <div class="lg:col-span-4 bg-neutral-900 p-6 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-quebrada-border relative">
+                                <div class="flex items-center justify-between">
+                                    <span class="px-3 py-1 rounded-lg bg-quebrada-orange text-black font-black text-xs uppercase tracking-wider flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-black animate-ping"></span>
+                                        URGENTE
+                                    </span>
+                                    <span class="text-xs font-bold text-gray-400"><i class="fa-solid fa-location-dot text-quebrada-orange mr-1"></i>Mauá - SP</span>
+                                </div>
+                                
+                                <div class="my-6 flex flex-col items-center text-center">
+                                    <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-quebrada-orange to-quebrada-yellow text-black font-display text-2xl flex items-center justify-center mb-3 shadow-lg">
+                                        DM
+                                    </div>
+                                    <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Registro verificado no local</p>
+                                    <p class="text-sm text-gray-200 font-bold mt-1">Pedido #049 • Cesta + Farmácia</p>
+                                </div>
+
+                                <div class="bg-black/60 rounded-xl p-3 border border-quebrada-border text-xs text-gray-300">
+                                    <i class="fa-solid fa-camera text-quebrada-yellow mr-1.5"></i>
+                                    Foto da receita médica e endereço conferidos pela equipe.
+                                </div>
+                            </div>
+
+                            <!-- Conteúdo do Pedido -->
+                            <div class="lg:col-span-8 p-6 sm:p-8 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex flex-wrap items-baseline justify-between gap-2 mb-3">
+                                        <h2 class="font-display text-2xl sm:text-3xl text-white">Dona Maria, 62 anos</h2>
+                                        <span class="text-lg sm:text-xl font-black text-quebrada-yellow">Meta: R$ 250</span>
+                                    </div>
+
+                                    <div class="bg-quebrada-black border border-quebrada-border rounded-2xl p-4 mb-6">
+                                        <span class="text-xs font-black uppercase text-gray-400 block mb-1">O que ela precisa agora:</span>
+                                        <p class="text-lg sm:text-xl font-extrabold text-white">2 cestas básicas e remédio de pressão</p>
+                                    </div>
+
+                                    <!-- Barra de Progresso 80% -->
+                                    <div class="mb-6">
+                                        <div class="flex flex-wrap justify-between items-end gap-2 mb-2">
+                                            <span class="text-base sm:text-lg font-black text-quebrada-yellow">Já conseguimos 80%</span>
+                                            <span class="px-3 py-1 rounded-lg bg-quebrada-orange/20 border border-quebrada-orange text-quebrada-orange font-black text-sm">
+                                                80% - Falta R$ 50
+                                            </span>
+                                        </div>
+                                        <div class="w-full h-5 bg-black rounded-full overflow-hidden p-1 border border-quebrada-border">
+                                            <div class="h-full bg-gradient-to-r from-quebrada-orange to-quebrada-yellow rounded-full transition-all duration-500" style="width: 80%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Ações -->
+                                <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                                    <button onclick="openPixModal('Dona Maria, 62 anos (Mauá - SP)', '2 cestas básicas e remédio de pressão', 'Falta R$ 50 para fechar')" class="flex-1 py-4 px-6 rounded-xl bg-quebrada-orange hover:bg-quebrada-orangeHover text-black font-black text-base uppercase transition-colors flex items-center justify-center gap-2">
+                                        <span class="font-display text-lg leading-none">S</span>
+                                        <span>Ajudar Dona Maria Agora</span>
+                                    </button>
+                                    <button onclick="copyPixKey()" class="py-4 px-5 rounded-xl bg-quebrada-black hover:bg-neutral-800 text-white border border-quebrada-border font-extrabold text-sm uppercase flex items-center justify-center gap-2">
+                                        <i class="fa-regular fa-copy text-quebrada-yellow"></i>
+                                        <span>Copiar Pix</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- EXEMPLO 2 - URGENTE -->
+                    <article class="bg-quebrada-card border-2 border-quebrada-border hover:border-quebrada-orange/70 transition-colors rounded-3xl overflow-hidden shadow-xl">
+                        <div class="grid grid-cols-1 lg:grid-cols-12">
+                            <div class="lg:col-span-4 bg-neutral-900 p-6 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-quebrada-border">
+                                <div class="flex items-center justify-between">
+                                    <span class="px-3 py-1 rounded-lg bg-quebrada-orange text-black font-black text-xs uppercase tracking-wider flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-black animate-ping"></span>
+                                        URGENTE
+                                    </span>
+                                    <span class="text-xs font-bold text-gray-400"><i class="fa-solid fa-house-flood-water text-quebrada-orange mr-1"></i>Enchente</span>
+                                </div>
+                                
+                                <div class="my-6 flex flex-col items-center text-center">
+                                    <div class="w-20 h-20 rounded-2xl bg-neutral-800 border-2 border-quebrada-orange text-quebrada-orange font-display text-2xl flex items-center justify-center mb-3">
+                                        FJ
+                                    </div>
+                                    <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Reconstrução Imediata</p>
+                                    <p class="text-sm text-gray-200 font-bold mt-1">Pedido #050 • Abrigo e Casa</p>
+                                </div>
+
+                                <div class="bg-black/60 rounded-xl p-3 border border-quebrada-border text-xs text-gray-300">
+                                    <i class="fa-solid fa-camera text-quebrada-yellow mr-1.5"></i>
+                                    Fotos da casa atingida pela água registradas pela liderança local.
+                                </div>
+                            </div>
+
+                            <div class="lg:col-span-8 p-6 sm:p-8 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex flex-wrap items-baseline justify-between gap-2 mb-3">
+                                        <h2 class="font-display text-2xl sm:text-3xl text-white">Família do João</h2>
+                                        <span class="text-lg sm:text-xl font-black text-quebrada-yellow">Meta: R$ 400</span>
+                                    </div>
+                                    <p class="text-sm font-bold text-quebrada-orange mb-3">Perdeu tudo na enchente desta semana</p>
+
+                                    <div class="bg-quebrada-black border border-quebrada-border rounded-2xl p-4 mb-6">
+                                        <span class="text-xs font-black uppercase text-gray-400 block mb-1">O que precisam agora:</span>
+                                        <p class="text-lg sm:text-xl font-extrabold text-white">Colchão, roupa de cama e roupa de criança</p>
+                                    </div>
+
+                                    <!-- Barra de Progresso 30% -->
+                                    <div class="mb-6">
+                                        <div class="flex flex-wrap justify-between items-end gap-2 mb-2">
+                                            <span class="text-base sm:text-lg font-black text-white">Já conseguimos 30%</span>
+                                            <span class="px-3 py-1 rounded-lg bg-quebrada-yellow/15 border border-quebrada-yellow text-quebrada-yellow font-black text-sm">
+                                                30% - Falta R$ 280
+                                            </span>
+                                        </div>
+                                        <div class="w-full h-5 bg-black rounded-full overflow-hidden p-1 border border-quebrada-border">
+                                            <div class="h-full bg-gradient-to-r from-quebrada-orange to-quebrada-yellow rounded-full" style="width: 30%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                                    <button onclick="openPixModal('Família do João (Enchente)', 'Colchão, roupa de cama e roupa de criança', 'Falta R$ 280')" class="flex-1 py-4 px-6 rounded-xl bg-quebrada-orange hover:bg-quebrada-orangeHover text-black font-black text-base uppercase transition-colors flex items-center justify-center gap-2">
+                                        <i class="fa-solid fa-heart"></i>
+                                        <span>Ajudar Agora</span>
+                                    </button>
+                                    <button onclick="navigateTo('participar', 'ajudar')" class="py-4 px-5 rounded-xl bg-quebrada-black hover:bg-neutral-800 text-white border border-quebrada-border font-extrabold text-sm uppercase flex items-center justify-center gap-2">
+                                        <i class="fa-solid fa-box-open text-quebrada-yellow"></i>
+                                        <span>Doar Colchão/Roupa</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- EXEMPLO 3 - RESOLVIDO (Demonstração do ciclo completo) -->
+                    <article class="bg-quebrada-card/80 border-2 border-emerald-500/60 rounded-3xl overflow-hidden">
+                        <div class="grid grid-cols-1 lg:grid-cols-12">
+                            <div class="lg:col-span-4 bg-emerald-950/30 p-6 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-emerald-500/30">
+                                <div class="flex items-center justify-between">
+                                    <span class="px-3 py-1 rounded-lg bg-emerald-400 text-black font-black text-xs uppercase tracking-wider flex items-center gap-1.5">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                        100% RESOLVIDO
+                                    </span>
+                                    <span class="text-xs font-bold text-emerald-300">Entregue em 3h</span>
+                                </div>
+
+                                <!-- Registro visual realista de entrega feita -->
+                                <div class="my-5 bg-quebrada-black border border-emerald-500/40 rounded-2xl p-4 text-center">
+                                    <div class="w-14 h-14 rounded-full bg-emerald-400/20 text-emerald-400 flex items-center justify-center mx-auto mb-2 text-2xl">
+                                        <i class="fa-solid fa-camera-retro"></i>
+                                    </div>
+                                    <p class="text-xs font-black text-emerald-400 uppercase">Foto da Entrega Registrada</p>
+                                    <p class="text-xs text-gray-300 mt-1">Botijão P13 + 12L de leite entregues na porta da Dona Francisca.</p>
+                                    <button onclick="openReceiptModal('Dona Francisca, 58 anos', 'Botijão de gás P13 + Caixa de leite integral', 'R$ 180,00', '100% RESOLVIDO - Entrega confirmada com foto e nota fiscal do depósito.')" class="mt-3 text-xs font-extrabold text-quebrada-yellow underline hover:text-white">
+                                        Ver comprovante e foto &rarr;
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="lg:col-span-8 p-6 sm:p-8 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex flex-wrap items-baseline justify-between gap-2 mb-3">
+                                        <h2 class="font-display text-2xl sm:text-3xl text-white">Dona Francisca, 58 anos</h2>
+                                        <span class="text-lg font-black text-emerald-400">Meta batida: R$ 180</span>
+                                    </div>
+                                    <p class="text-gray-300 text-base mb-5"><strong>Pedido:</strong> Gás de cozinha e leite para os netos.</p>
+
+                                    <!-- Barra 100% -->
+                                    <div class="mb-4">
+                                        <div class="flex justify-between text-sm font-black mb-1.5">
+                                            <span class="text-emerald-400">META COMPLETA!</span>
+                                            <span class="text-quebrada-yellow">100% RESOLVIDO</span>
+                                        </div>
+                                        <div class="w-full h-4 bg-black rounded-full overflow-hidden p-0.5 border border-emerald-500/40">
+                                            <div class="h-full bg-emerald-400 rounded-full" style="width: 100%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-black/50 border border-quebrada-border rounded-xl p-4 flex items-center justify-between gap-4">
+                                    <span class="text-sm text-gray-300 font-semibold">Quer ver mais entregas concluídas?</span>
+                                    <button onclick="navigateTo('transparencia')" class="text-sm font-black text-quebrada-yellow hover:underline shrink-0">
+                                        Ir para Transparência &rarr;
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             PÁGINA 3: ADOTE UM SONHO
+        ========================================================== -->
+        <section id="page-sonhos" class="page-section">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+                <!-- Cabeçalho e Texto Exato -->
+                <div class="bg-quebrada-card border-2 border-quebrada-yellow rounded-3xl p-6 sm:p-10 mb-10">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-quebrada-yellow text-black font-black text-xs uppercase tracking-wider mb-4">
+                        <i class="fa-solid fa-star"></i>
+                        Mude uma história
+                    </div>
+                    <h1 class="font-display text-3xl sm:text-5xl text-white mb-5">ADOTE UM SONHO</h1>
+                    <blockquote class="text-lg sm:text-2xl text-white font-bold leading-relaxed border-l-4 border-quebrada-orange pl-4 sm:pl-6 mb-6">
+                        "Um sonho pequeno pra você pode ser gigante pra outra pessoa. Aqui você não doa pra uma instituição distante. Você adota o sonho de uma pessoa real, com nome, rosto e história."
+                    </blockquote>
+                    <div class="inline-flex items-center gap-2.5 bg-quebrada-black border border-quebrada-border px-4 py-3 rounded-xl text-sm sm:text-base text-quebrada-yellow font-bold">
+                        <i class="fa-solid fa-video"></i>
+                        <span>Quando o sonho é realizado, postamos foto + vídeo de agradecimento.</span>
+                    </div>
+                </div>
+
+                <!-- Grid de 3 Sonhos -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- SONHO 1: JOÃO, 17 ANOS -->
+                    <article class="bg-quebrada-card border-2 border-quebrada-border hover:border-quebrada-yellow transition-all rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <!-- Topo com Avatar Autentico e Valor -->
+                            <div class="flex items-center justify-between gap-3 mb-5">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-quebrada-orange to-quebrada-yellow text-black font-display text-xl flex items-center justify-center shrink-0 shadow-md">
+                                        J17
+                                    </div>
+                                    <div>
+                                        <h2 class="font-display text-xl text-white leading-tight">João, 17 anos</h2>
+                                        <span class="text-xs font-bold text-gray-400">Estudante • Ensino Médio</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Badge Valor -->
+                            <div class="bg-quebrada-black border border-quebrada-yellow/40 rounded-xl px-4 py-2.5 mb-4 flex items-center justify-between">
+                                <span class="text-xs font-extrabold uppercase text-gray-400">Precisa de:</span>
+                                <span class="font-display text-xl text-quebrada-yellow">R$ 120</span>
+                            </div>
+
+                            <!-- O Sonho -->
+                            <h3 class="text-lg font-extrabold text-white mb-3 leading-snug">
+                                Pagar a inscrição do ENEM + passagem pra fazer a prova
+                            </h3>
+
+                            <!-- Por que (Citação) -->
+                            <div class="bg-neutral-900/90 border-l-4 border-quebrada-orange p-3.5 rounded-r-xl mb-6">
+                                <span class="text-[11px] font-black uppercase text-quebrada-orange block mb-1">Por que esse sonho importa:</span>
+                                <p class="text-sm sm:text-base text-gray-200 italic font-medium">
+                                    "Quero ser o primeiro da minha família a entrar na faculdade"
+                                </p>
+                            </div>
+                        </div>
+
+                        <button onclick="openPixModal('Sonho do João, 17 anos', 'Inscrição do ENEM + passagem para a prova', 'R$ 120,00')" class="w-full py-4 px-5 rounded-xl bg-quebrada-yellow hover:bg-quebrada-yellowHover text-black font-black text-sm uppercase tracking-wide transition-transform active:scale-95 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-hand-holding-heart text-base"></i>
+                            <span>Adotar esse Sonho</span>
+                        </button>
+                    </article>
+
+                    <!-- SONHO 2: ANA, 16 ANOS -->
+                    <article class="bg-quebrada-card border-2 border-quebrada-border hover:border-quebrada-yellow transition-all rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between gap-3 mb-5">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-quebrada-yellow to-amber-500 text-black font-display text-xl flex items-center justify-center shrink-0 shadow-md">
+                                        A16
+                                    </div>
+                                    <div>
+                                        <h2 class="font-display text-xl text-white leading-tight">Ana, 16 anos</h2>
+                                        <span class="text-xs font-bold text-gray-400">Atleta da Quebrada</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-quebrada-black border border-quebrada-yellow/40 rounded-xl px-4 py-2.5 mb-4 flex items-center justify-between">
+                                <span class="text-xs font-extrabold uppercase text-gray-400">Precisa de:</span>
+                                <span class="font-display text-xl text-quebrada-yellow">R$ 180</span>
+                            </div>
+
+                            <h3 class="text-lg font-extrabold text-white mb-3 leading-snug">
+                                Um par de tênis pra correr sua primeira corrida de rua
+                            </h3>
+
+                            <div class="bg-neutral-900/90 border-l-4 border-quebrada-orange p-3.5 rounded-r-xl mb-6">
+                                <span class="text-[11px] font-black uppercase text-quebrada-orange block mb-1">Por que esse sonho importa:</span>
+                                <p class="text-sm sm:text-base text-gray-200 italic font-medium">
+                                    "Correr me tira da ansiedade e me faz acreditar em mim"
+                                </p>
+                            </div>
+                        </div>
+
+                        <button onclick="openPixModal('Sonho da Ana, 16 anos', 'Um par de tênis para corrida de rua', 'R$ 180,00')" class="w-full py-4 px-5 rounded-xl bg-quebrada-yellow hover:bg-quebrada-yellowHover text-black font-black text-sm uppercase tracking-wide transition-transform active:scale-95 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-hand-holding-heart text-base"></i>
+                            <span>Adotar esse Sonho</span>
+                        </button>
+                    </article>
+
+                    <!-- SONHO 3: TURMA DO 3º ANO -->
+                    <article class="bg-quebrada-card border-2 border-quebrada-border hover:border-quebrada-yellow transition-all rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between gap-3 mb-5">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-quebrada-orange to-red-500 text-black font-display text-xl flex items-center justify-center shrink-0 shadow-md">
+                                        3ºA
+                                    </div>
+                                    <div>
+                                        <h2 class="font-display text-xl text-white leading-tight">Turma do 3º ano</h2>
+                                        <span class="text-xs font-bold text-gray-400">Escola Pública Local</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-quebrada-black border border-quebrada-yellow/40 rounded-xl px-4 py-2.5 mb-4 flex items-center justify-between">
+                                <span class="text-xs font-extrabold uppercase text-gray-400">Precisa de:</span>
+                                <span class="font-display text-xl text-quebrada-yellow">R$ 500 <span class="text-xs font-sans font-bold text-gray-300">de ônibus</span></span>
+                            </div>
+
+                            <h3 class="text-lg font-extrabold text-white mb-3 leading-snug">
+                                Visitar a universidade USP
+                            </h3>
+
+                            <div class="bg-neutral-900/90 border-l-4 border-quebrada-orange p-3.5 rounded-r-xl mb-6">
+                                <span class="text-[11px] font-black uppercase text-quebrada-orange block mb-1">Por que esse sonho importa:</span>
+                                <p class="text-sm sm:text-base text-gray-200 italic font-medium">
+                                    "Muita gente daqui nunca entrou numa faculdade. Queremos ver que é possível"
+                                </p>
+                            </div>
+                        </div>
+
+                        <button onclick="openPixModal('Sonho da Turma do 3º ano', 'Fretamento de ônibus para visitar a USP', 'R$ 500,00')" class="w-full py-4 px-5 rounded-xl bg-quebrada-yellow hover:bg-quebrada-yellowHover text-black font-black text-sm uppercase tracking-wide transition-transform active:scale-95 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-hand-holding-heart text-base"></i>
+                            <span>Adotar esse Sonho</span>
+                        </button>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             PÁGINA 4: TRANSPARÊNCIA (A MAIS IMPORTANTE)
+        ========================================================== -->
+        <section id="page-transparencia" class="page-section">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+                <!-- Cabeçalho Destaque -->
+                <div class="bg-quebrada-card border-2 border-quebrada-yellow rounded-3xl p-6 sm:p-10 mb-10">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-quebrada-yellow text-black font-black text-xs uppercase tracking-wider mb-4">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        100% Aberto • Sem Enrolação
+                    </div>
+                    <h1 class="font-display text-3xl sm:text-5xl text-white mb-4">TRANSPARÊNCIA</h1>
+                    <p class="text-lg sm:text-2xl text-gray-200 font-bold leading-relaxed max-w-3xl">
+                        Aqui você sabe pra onde vai cada real. Toda semana postamos: <span class="text-quebrada-yellow">quanto entrou, quanto saiu, pra quem foi e foto da entrega.</span> Sem enrolação.
+                    </p>
+                </div>
+
+                <!-- Resumo Semanal: Entradas vs Saídas -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+                    <div class="bg-quebrada-card border border-quebrada-border p-5 rounded-2xl">
+                        <span class="text-xs font-black uppercase text-gray-400">Entradas na Semana (Pix)</span>
+                        <div class="font-display text-2xl sm:text-3xl text-emerald-400 mt-1">+ R$ 2.340,00</div>
+                        <span class="text-xs text-gray-400 mt-1 block">47 doações registradas</span>
+                    </div>
+                    <div class="bg-quebrada-card border border-quebrada-border p-5 rounded-2xl">
+                        <span class="text-xs font-black uppercase text-gray-400">Saídas Diretas (Compras/Pix)</span>
+                        <div class="font-display text-2xl sm:text-3xl text-quebrada-orange mt-1">- R$ 2.190,00</div>
+                        <span class="text-xs text-gray-400 mt-1 block">9 atendimentos concluídos</span>
+                    </div>
+                    <div class="bg-quebrada-card border border-quebrada-yellow/50 p-5 rounded-2xl">
+                        <span class="text-xs font-black uppercase text-quebrada-yellow">Saldo em Caixa para SOS</span>
+                        <div class="font-display text-2xl sm:text-3xl text-white mt-1">R$ 150,00</div>
+                        <span class="text-xs text-gray-300 mt-1 block">Disponível para emergência</span>
+                    </div>
+                </div>
+
+                <!-- Planilha Simples e Responsiva -->
+                <div class="bg-quebrada-card border border-quebrada-border rounded-3xl overflow-hidden mb-12">
+                    <div class="p-6 border-b border-quebrada-border flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                            <h2 class="font-display text-xl sm:text-2xl text-white">Planilha de Entregas Recentes</h2>
+                            <p class="text-sm text-gray-400">Clique em "Ver Prova" para abrir o comprovante do Pix e o registro da entrega.</p>
+                        </div>
+                        <span class="px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 text-xs font-black uppercase self-start sm:self-auto">Atualizado Toda Semana</span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-quebrada-black text-quebrada-yellow text-xs sm:text-sm uppercase font-black border-b border-quebrada-border">
+                                    <th class="py-4 px-4 sm:px-6">Data</th>
+                                    <th class="py-4 px-4 sm:px-6">Quem recebeu</th>
+                                    <th class="py-4 px-4 sm:px-6">O que foi entregue</th>
+                                    <th class="py-4 px-4 sm:px-6">Valor</th>
+                                    <th class="py-4 px-4 sm:px-6 text-right">Comprovante / Foto</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-quebrada-border text-sm sm:text-base">
+                                <tr class="hover:bg-neutral-900/70 transition-colors">
+                                    <td class="py-4 px-4 sm:px-6 font-bold text-gray-300 whitespace-nowrap">22/11</td>
+                                    <td class="py-4 px-4 sm:px-6 font-extrabold text-white">Dona Francisca (58a)</td>
+                                    <td class="py-4 px-4 sm:px-6 text-gray-300">Botijão de gás + 12L leite</td>
+                                    <td class="py-4 px-4 sm:px-6 font-black text-quebrada-yellow whitespace-nowrap">R$ 180,00</td>
+                                    <td class="py-4 px-4 sm:px-6 text-right whitespace-nowrap">
+                                        <button onclick="openReceiptModal('Dona Francisca (58 anos)', 'Botijão de gás P13 + Caixa de Leite', 'R$ 180,00', 'Pix pago direto ao depósito de gás + foto da entrega na residência.')" class="px-3.5 py-2 rounded-xl bg-quebrada-orange text-black font-black text-xs uppercase hover:bg-quebrada-orangeHover transition-colors">
+                                            <i class="fa-solid fa-receipt mr-1"></i>Ver Prova
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-neutral-900/70 transition-colors">
+                                    <td class="py-4 px-4 sm:px-6 font-bold text-gray-300 whitespace-nowrap">20/11</td>
+                                    <td class="py-4 px-4 sm:px-6 font-extrabold text-white">Lucas, 18 anos</td>
+                                    <td class="py-4 px-4 sm:px-6 text-gray-300">Passagem + marmita p/ entrevista</td>
+                                    <td class="py-4 px-4 sm:px-6 font-black text-quebrada-yellow whitespace-nowrap">R$ 65,00</td>
+                                    <td class="py-4 px-4 sm:px-6 text-right whitespace-nowrap">
+                                        <button onclick="openReceiptModal('Lucas, 18 anos', 'Recarga Bilhete Único + Vale Refeição', 'R$ 65,00', 'Comprovante de recarga + selfie do Lucas indo para a entrevista no Centro.')" class="px-3.5 py-2 rounded-xl bg-quebrada-orange text-black font-black text-xs uppercase hover:bg-quebrada-orangeHover transition-colors">
+                                            <i class="fa-solid fa-receipt mr-1"></i>Ver Prova
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-neutral-900/70 transition-colors">
+                                    <td class="py-4 px-4 sm:px-6 font-bold text-gray-300 whitespace-nowrap">18/11</td>
+                                    <td class="py-4 px-4 sm:px-6 font-extrabold text-white">Família Silva (4 filhos)</td>
+                                    <td class="py-4 px-4 sm:px-6 text-gray-300">2 Cestas básicas + fraldas G</td>
+                                    <td class="py-4 px-4 sm:px-6 font-black text-quebrada-yellow whitespace-nowrap">R$ 310,00</td>
+                                    <td class="py-4 px-4 sm:px-6 text-right whitespace-nowrap">
+                                        <button onclick="openReceiptModal('Família Silva', '2 Cestas Básicas Completas + 2 Pacotes de Fraldas G', 'R$ 310,00', 'Nota fiscal do mercado do bairro + foto da entrega com a mãe.')" class="px-3.5 py-2 rounded-xl bg-quebrada-orange text-black font-black text-xs uppercase hover:bg-quebrada-orangeHover transition-colors">
+                                            <i class="fa-solid fa-receipt mr-1"></i>Ver Prova
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-neutral-900/70 transition-colors">
+                                    <td class="py-4 px-4 sm:px-6 font-bold text-gray-300 whitespace-nowrap">15/11</td>
+                                    <td class="py-4 px-4 sm:px-6 font-extrabold text-white">Seu Antônio, 71 anos</td>
+                                    <td class="py-4 px-4 sm:px-6 text-gray-300">Remédio contínuo + cobertor</td>
+                                    <td class="py-4 px-4 sm:px-6 font-black text-quebrada-yellow whitespace-nowrap">R$ 145,00</td>
+                                    <td class="py-4 px-4 sm:px-6 text-right whitespace-nowrap">
+                                        <button onclick="openReceiptModal('Seu Antônio, 71 anos', 'Medicação controlada + Cobertor casal', 'R$ 145,00', 'Cupom fiscal da farmácia + vídeo de 30s de agradecimento.')" class="px-3.5 py-2 rounded-xl bg-quebrada-orange text-black font-black text-xs uppercase hover:bg-quebrada-orangeHover transition-colors">
+                                            <i class="fa-solid fa-receipt mr-1"></i>Ver Prova
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Seção Prints do Pix & Vídeos de Entrega (30s) -->
+                <div>
+                    <h2 class="font-display text-2xl sm:text-3xl text-white mb-2">Prints do Pix & Vídeos de Entrega (30s)</h2>
+                    <p class="text-gray-300 text-base mb-6">Registro direto do celular, sem edição cinematográfica. A realidade da entrega na quebrada.</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                        <!-- Card Vídeo 30s -->
+                        <div class="bg-quebrada-card border border-quebrada-border rounded-2xl p-5 flex flex-col justify-between">
+                            <div>
+                                <div class="aspect-video bg-quebrada-black rounded-xl border border-quebrada-border flex flex-col items-center justify-center relative mb-4 group cursor-pointer" onclick="openReceiptModal('Vídeo de Entrega (28s) - Dona Francisca', 'Entrega do botijão de gás e leite', 'R$ 180,00', 'Registro em vídeo gravado pelo voluntário Marcos no momento da entrega.')">
+                                    <div class="w-14 h-14 rounded-full bg-quebrada-orange text-black flex items-center justify-center text-xl shadow-lg group-hover:scale-110 transition-transform">
+                                        <i class="fa-solid fa-play ml-1"></i>
+                                    </div>
+                                    <span class="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/80 text-white text-xs font-bold">0:28</span>
+                                </div>
+                                <span class="text-xs font-black text-quebrada-yellow uppercase">Vídeo de Entrega</span>
+                                <h3 class="font-extrabold text-white text-lg mt-1">Gás entregue na casa da Dona Francisca</h3>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-3">Gravado em 22/11 • Mauá - SP</p>
+                        </div>
+
+                        <!-- Card Print do Pix -->
+                        <div class="bg-quebrada-card border border-quebrada-border rounded-2xl p-5 flex flex-col justify-between">
+                            <div>
+                                <div class="aspect-video bg-quebrada-black rounded-xl border border-quebrada-border p-4 flex flex-col justify-between mb-4 cursor-pointer" onclick="openReceiptModal('Extrato Semanal Pix', 'Fechamento de Caixa da Semana', 'R$ 2.340,00', 'Todos os comprovantes de entrada e saída batendo centavo por centavo.')">
+                                    <div class="flex items-center justify-between text-xs text-gray-400">
+                                        <span><i class="fa-solid fa-pix text-emerald-400 mr-1"></i>Comprovante Bancário</span>
+                                        <span class="text-emerald-400 font-bold">VERIFICADO</span>
+                                    </div>
+                                    <div class="my-auto text-center">
+                                        <p class="text-xs text-gray-400">Transferência Mercado Bairro</p>
+                                        <p class="font-display text-2xl text-white">R$ 310,00</p>
+                                    </div>
+                                    <div class="text-[11px] text-quebrada-yellow font-bold text-center">Toque para ampliar comprovante</div>
+                                </div>
+                                <span class="text-xs font-black text-emerald-400 uppercase">Print do Pix</span>
+                                <h3 class="font-extrabold text-white text-lg mt-1">Pagamento direto ao mercado local</h3>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-3">ID Transação: #PIX99281-QBR</p>
+                        </div>
+
+                        <!-- Card Vídeo Agradecimento Sonho -->
+                        <div class="bg-quebrada-card border border-quebrada-border rounded-2xl p-5 flex flex-col justify-between">
+                            <div>
+                                <div class="aspect-video bg-quebrada-black rounded-xl border border-quebrada-border flex flex-col items-center justify-center relative mb-4 group cursor-pointer" onclick="openReceiptModal('Vídeo de Agradecimento (30s) - Sonho Realizado', 'Kit de material escolar e mochila', 'R$ 150,00', 'Agradecimento enviado pela mãe da estudante após receber o kit completo.')">
+                                    <div class="w-14 h-14 rounded-full bg-quebrada-yellow text-black flex items-center justify-center text-xl shadow-lg group-hover:scale-110 transition-transform">
+                                        <i class="fa-solid fa-play ml-1"></i>
+                                    </div>
+                                    <span class="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/80 text-white text-xs font-bold">0:30</span>
+                                </div>
+                                <span class="text-xs font-black text-quebrada-orange uppercase">Sonho Realizado</span>
+                                <h3 class="font-extrabold text-white text-lg mt-1">Recado de agradecimento pelo material</h3>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-3">Gravado em 16/11 • Comunidade</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             PÁGINA 5: QUERO AJUDAR / PRECISO DE AJUDA
+        ========================================================== -->
+        <section id="page-participar" class="page-section">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+                <div class="text-center max-w-2xl mx-auto mb-10">
+                    <h1 class="font-display text-3xl sm:text-5xl text-white mb-3">FAÇA PARTE AGORA</h1>
+                    <p class="text-base sm:text-lg text-gray-300">Rápido, sem cadastro longo e direto no WhatsApp. Escolha sua opção abaixo:</p>
+                </div>
+
+                <!-- Seletor Rápido em Mobile -->
+                <div class="grid grid-cols-2 gap-2 p-1.5 bg-quebrada-card border border-quebrada-border rounded-2xl max-w-md mx-auto mb-8 lg:hidden">
+                    <button id="tab-btn-ajudar" onclick="switchFormTab('ajudar')" class="py-3 px-4 rounded-xl font-black text-sm uppercase bg-quebrada-orange text-black transition-all">
+                        Quero Ajudar
+                    </button>
+                    <button id="tab-btn-preciso" onclick="switchFormTab('preciso')" class="py-3 px-4 rounded-xl font-black text-sm uppercase text-gray-300 transition-all">
+                        Preciso de Ajuda
+                    </button>
+                </div>
+
+                <!-- Dois Formulários Lado a Lado no Desktop -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                    
+                    <!-- FORMULÁRIO 1: QUERO AJUDAR (4 PERGUNTAS) -->
+                    <div id="form-box-ajudar" class="bg-quebrada-card border-2 border-quebrada-orange rounded-3xl p-6 sm:p-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 rounded-2xl bg-quebrada-orange text-black flex items-center justify-center text-2xl font-black">
+                                <i class="fa-solid fa-hand-holding-heart"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-black uppercase text-quebrada-orange">4 perguntas rápidas</span>
+                                <h2 class="font-display text-2xl text-white">QUERO AJUDAR</h2>
+                            </div>
+                        </div>
+
+                        <form id="helper-form" onsubmit="handleHelperSubmit(event)" class="space-y-5">
+                            <!-- Pergunta 1: Nome -->
+                            <div>
+                                <label for="helper-name" class="block text-sm font-extrabold text-white mb-2">1. Seu Nome *</label>
+                                <input type="text" id="helper-name" required placeholder="Ex: Carlos Eduardo" class="w-full px-4 py-3.5 rounded-xl bg-quebrada-black border border-quebrada-border text-white placeholder-gray-500 focus:outline-none focus:border-quebrada-orange text-base">
+                            </div>
+
+                            <!-- Pergunta 2: WhatsApp -->
+                            <div>
+                                <label for="helper-whatsapp" class="block text-sm font-extrabold text-white mb-2">2. Seu WhatsApp *</label>
+                                <input type="tel" id="helper-whatsapp" required placeholder="(11) 99999-9999" class="w-full px-4 py-3.5 rounded-xl bg-quebrada-black border border-quebrada-border text-white placeholder-gray-500 focus:outline-none focus:border-quebrada-orange text-base">
+                            </div>
+
+                            <!-- Pergunta 3: Como quer ajudar? (Checkboxes) -->
+                            <div>
+                                <span class="block text-sm font-extrabold text-white mb-2.5">3. Como quer ajudar? *</span>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                    <label class="flex items-center gap-3 p-3.5 rounded-xl bg-quebrada-black border border-quebrada-border hover:border-quebrada-orange cursor-pointer">
+                                        <input type="checkbox" name="helpType" value="Doar dinheiro" class="w-5 h-5 accent-quebrada-orange rounded">
+                                        <span class="text-sm font-bold text-white">Doar dinheiro</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-3.5 rounded-xl bg-quebrada-black border border-quebrada-border hover:border-quebrada-orange cursor-pointer">
+                                        <input type="checkbox" name="helpType" value="Doar coisa" class="w-5 h-5 accent-quebrada-orange rounded">
+                                        <span class="text-sm font-bold text-white">Doar coisa</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-3.5 rounded-xl bg-quebrada-black border border-quebrada-border hover:border-quebrada-orange cursor-pointer">
+                                        <input type="checkbox" name="helpType" value="Ser voluntário" class="w-5 h-5 accent-quebrada-orange rounded">
+                                        <span class="text-sm font-bold text-white">Ser voluntário</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-3.5 rounded-xl bg-quebrada-black border border-quebrada-border hover:border-quebrada-orange cursor-pointer">
+                                        <input type="checkbox" name="helpType" value="Divulgar" class="w-5 h-5 accent-quebrada-orange rounded">
+                                        <span class="text-sm font-bold text-white">Divulgar</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Pergunta 4: Quanto pode ajudar por mês? -->
+                            <div>
+                                <label for="helper-amount" class="block text-sm font-extrabold text-white mb-2">4. Quanto pode ajudar por mês?</label>
+                                <select id="helper-amount" class="w-full px-4 py-3.5 rounded-xl bg-quebrada-black border border-quebrada-border text-white focus:outline-none focus:border-quebrada-orange text-base font-semibold">
+                                    <option value="Pontual (quando der)">Vou ajudar pontualmente quando der</option>
+                                    <option value="R$ 20 por mês">R$ 20 por mês</option>
+                                    <option value="R$ 50 por mês" selected>R$ 50 por mês</option>
+                                    <option value="R$ 100 por mês">R$ 100 por mês</option>
+                                    <option value="Outro valor / Doação de itens">Outro valor ou doação de itens/tempo</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="w-full py-4 px-6 rounded-xl bg-quebrada-orange hover:bg-quebrada-orangeHover text-black font-black text-base uppercase tracking-wide transition-transform active:scale-95">
+                                Enviar e Entrar na Rede
+                            </button>
+                        </form>
+
+                        <!-- Mensagem de Confirmação -->
+                        <div id="helper-confirmation" class="hidden mt-6 p-5 rounded-2xl bg-emerald-950/60 border border-emerald-500 text-white">
+                            <div class="flex items-center gap-3 mb-2">
+                                <i class="fa-solid fa-circle-check text-2xl text-emerald-400"></i>
+                                <h3 class="font-display text-lg text-emerald-400">Tamo junto na quebrada!</h3>
+                            </div>
+                            <p id="helper-confirmation-text" class="text-sm text-gray-200 leading-relaxed"></p>
+                        </div>
+                    </div>
+
+                    <!-- FORMULÁRIO 2: PRECISO DE AJUDA -->
+                    <div id="form-box-preciso" class="hidden lg:block bg-quebrada-card border-2 border-quebrada-yellow rounded-3xl p-6 sm:p-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 rounded-2xl bg-quebrada-yellow text-black flex items-center justify-center text-2xl font-black">
+                                <i class="fa-solid fa-bullhorn"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-black uppercase text-quebrada-yellow">Sem vergonha, peça ajuda</span>
+                                <h2 class="font-display text-2xl text-white">PRECISO DE AJUDA</h2>
+                            </div>
+                        </div>
+
+                        <form id="need-form" onsubmit="handleNeedSubmit(event)" class="space-y-5">
+                            <!-- Nome -->
+                            <div>
+                                <label for="need-name" class="block text-sm font-extrabold text-white mb-2">1. Seu Nome *</label>
+                                <input type="text" id="need-name" required placeholder="Ex: Maria Aparecida" class="w-full px-4 py-3.5 rounded-xl bg-quebrada-black border border-quebrada-border text-white placeholder-gray-500 focus:outline-none focus:border-quebrada-yellow text-base">
+                            </div>
+
+                            <!-- WhatsApp -->
+                            <div>
+                                <label for="need-whatsapp" class="block text-sm font-extrabold text-white mb-2">2. Seu WhatsApp (pra gente chamar) *</label>
+                                <input type="tel" id="need-whatsapp" required placeholder="(11) 99999-9999" class="w-full px-4 py-3.5 rounded-xl bg-quebrada-black border border-quebrada-border text-white placeholder-gray-500 focus:outline-none focus:border-quebrada-yellow text-base">
+                            </div>
+
+                            <!-- O que você precisa? -->
+                            <div>
+                                <label for="need-description" class="block text-sm font-extrabold text-white mb-2">3. O que você precisa? *</label>
+                                <textarea id="need-description" rows="3" required placeholder="Conte direto o que você precisa (ex: cesta básica, remédio, inscrição do ENEM) e seu bairro..." class="w-full px-4 py-3.5 rounded-xl bg-quebrada-black border border-quebrada-border text-white placeholder-gray-500 focus:outline-none focus:border-quebrada-yellow text-base"></textarea>
+                            </div>
+
+                            <!-- É urgente ou é um sonho? -->
+                            <div>
+                                <span class="block text-sm font-extrabold text-white mb-2.5">4. É urgente ou é um sonho? *</span>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="needCategory" value="SOS URGENTE" checked class="peer sr-only">
+                                        <div class="p-3.5 rounded-xl bg-quebrada-black border-2 border-quebrada-border peer-checked:border-quebrada-orange peer-checked:bg-quebrada-orange/15 text-center transition-all">
+                                            <span class="font-display text-quebrada-orange text-xl block mb-1 leading-none">S</span>
+                                            <span class="text-sm font-black text-white block">É URGENTE</span>
+                                        </div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="needCategory" value="ADOTE UM SONHO" class="peer sr-only">
+                                        <div class="p-3.5 rounded-xl bg-quebrada-black border-2 border-quebrada-border peer-checked:border-quebrada-yellow peer-checked:bg-quebrada-yellow/15 text-center transition-all">
+                                            <i class="fa-solid fa-star text-quebrada-yellow text-lg block mb-1"></i>
+                                            <span class="text-sm font-black text-white block">É UM SONHO</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Pode mandar foto? -->
+                            <div>
+                                <label class="block text-sm font-extrabold text-white mb-2">5. Pode mandar foto? (Opcional, ajuda a validar rápido)</label>
+                                <label for="need-photo" class="flex flex-col items-center justify-center w-full p-4 rounded-xl bg-quebrada-black border-2 border-dashed border-quebrada-border hover:border-quebrada-yellow cursor-pointer transition-colors">
+                                    <i class="fa-solid fa-camera text-2xl text-quebrada-yellow mb-1.5"></i>
+                                    <span id="photo-label-text" class="text-sm font-bold text-gray-300">Toque para escolher ou tirar foto</span>
+                                    <input type="file" id="need-photo" accept="image/*" onchange="previewPhoto(event)" class="hidden">
+                                </label>
+                                <div id="photo-preview-box" class="hidden mt-3 relative">
+                                    <img id="photo-preview-img" src="" alt="Prévia da foto enviada" class="w-full h-40 object-cover rounded-xl border border-quebrada-yellow">
+                                    <button type="button" onclick="clearPhoto()" class="absolute top-2 right-2 bg-black/80 text-white px-2.5 py-1 rounded-lg text-xs font-bold hover:bg-red-600">Remover</button>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="w-full py-4 px-6 rounded-xl bg-quebrada-yellow hover:bg-quebrada-yellowHover text-black font-black text-base uppercase tracking-wide transition-transform active:scale-95">
+                                Enviar Meu Pedido Agora
+                            </button>
+                        </form>
+
+                        <!-- Mensagem de Confirmação -->
+                        <div id="need-confirmation" class="hidden mt-6 p-5 rounded-2xl bg-emerald-950/60 border border-emerald-500 text-white">
+                            <div class="flex items-center gap-3 mb-2">
+                                <i class="fa-solid fa-circle-check text-2xl text-emerald-400"></i>
+                                <h3 class="font-display text-lg text-emerald-400">Pedido recebido!</h3>
+                            </div>
+                            <p id="need-confirmation-text" class="text-sm text-gray-200 leading-relaxed"></p>
+                            <button type="button" onclick="navigateTo('pedidos')" class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-quebrada-yellow text-black font-black text-xs uppercase hover:bg-quebrada-yellowHover transition-colors">
+                                <i class="fa-solid fa-lock"></i>
+                                <span>Abrir aba Pedidos de Ajuda (Equipe)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             PÁGINA 6 (RESTRITA): PEDIDOS DE AJUDA (LOGIN EQUIPE)
+        ========================================================== -->
+        <section id="page-pedidos" class="page-section">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+
+                <!-- TELA DE LOGIN RESTRITO -->
+                <div id="pedidos-login-screen" class="max-w-md mx-auto bg-quebrada-card border-2 border-quebrada-orange rounded-3xl p-6 sm:p-8 shadow-2xl">
+                    <div class="w-14 h-14 rounded-2xl bg-quebrada-orange/15 border border-quebrada-orange text-quebrada-orange flex items-center justify-center text-2xl mb-5">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <span class="text-xs font-black uppercase tracking-wider text-quebrada-yellow">Acesso Restrito • Equipe</span>
+                    <h1 class="font-display text-2xl sm:text-3xl text-white mt-1 mb-2">PEDIDOS DE AJUDA</h1>
+                    <p class="text-sm text-gray-300 mb-6 leading-relaxed">
+                        Área exclusiva para voluntários autorizados acompanharem quem pediu ajuda pelo formulário do site.
+                    </p>
+
+                    <form id="pedidos-login-form" onsubmit="handlePedidosLogin(event)" class="space-y-4">
+                        <div>
+                            <label for="login-user" class="block text-sm font-extrabold text-white mb-1.5">Login</label>
+                            <input type="text" id="login-user" required autocomplete="username" placeholder="Digite o login" class="w-full px-4 py-3.5 rounded-xl bg-quebrada-black border border-quebrada-border text-white placeholder-gray-500 focus:outline-none focus:border-quebrada-orange text-base">
+                        </div>
+                        <div>
+                            <label for="login-pass" class="block text-sm font-extrabold text-white mb-1.5">Senha</label>
+                            <input type="password" id="login-pass" required autocomplete="current-password" placeholder="Digite a senha" class="w-full px-4 py-3.5 rounded-xl bg-quebrada-black border border-quebrada-border text-white placeholder-gray-500 focus:outline-none focus:border-quebrada-orange text-base">
+                        </div>
+
+                        <p id="login-error-msg" class="hidden text-sm font-bold text-red-400 bg-red-950/50 border border-red-500/50 rounded-xl px-4 py-2.5">
+                            Login ou senha incorretos. Tente novamente.
+                        </p>
+
+                        <button type="submit" class="w-full py-4 px-6 rounded-xl bg-quebrada-orange hover:bg-quebrada-orangeHover text-black font-black text-base uppercase tracking-wide transition-transform active:scale-95 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-right-to-bracket"></i>
+                            <span>Entrar na Central</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- PAINEL RESTRITO APÓS LOGIN -->
+                <div id="pedidos-dashboard-screen" class="hidden">
+                    <div class="bg-quebrada-card border-2 border-quebrada-yellow rounded-3xl p-6 sm:p-8 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400 text-emerald-400 font-black text-xs uppercase mb-2">
+                                <i class="fa-solid fa-unlock"></i> Sessão Autorizada
+                            </div>
+                            <h1 class="font-display text-2xl sm:text-4xl text-white">CENTRAL DE PEDIDOS DE AJUDA</h1>
+                            <p class="text-sm sm:text-base text-gray-300 mt-1">
+                                Todos os pedidos enviados em <strong>Preciso de Ajuda</strong> aparecem aqui automaticamente.
+                            </p>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+                            <button onclick="clearAllPedidos()" class="px-4 py-3 rounded-xl bg-quebrada-black hover:bg-red-950/70 text-red-300 border border-red-500/40 font-extrabold text-xs uppercase transition-colors flex items-center gap-1.5">
+                                <i class="fa-solid fa-trash-can"></i>
+                                <span>Limpar Lista</span>
+                            </button>
+                            <button onclick="logoutPedidos()" class="px-4 py-3 rounded-xl bg-white hover:bg-quebrada-yellow text-black font-black text-xs uppercase transition-colors flex items-center gap-1.5">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                                <span>Sair</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Aviso sobre armazenamento no navegador -->
+                    <div class="bg-quebrada-card/80 border border-quebrada-border rounded-2xl p-4 mb-6 flex items-start gap-3 text-xs sm:text-sm text-gray-300">
+                        <i class="fa-solid fa-circle-info text-quebrada-yellow text-lg mt-0.5 shrink-0"></i>
+                        <p>
+                            <strong>Como os dados são salvos:</strong> Os pedidos ficam salvos no armazenamento local (<code class="text-quebrada-yellow">localStorage</code>) deste navegador/aparelho. Para acessar de vários celulares ou computadores ao mesmo tempo, vale conectar depois a uma planilha ou banco de dados compartilhado.
+                        </p>
+                    </div>
+
+                    <!-- Contadores Rápidos do Painel -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8">
+                        <div class="bg-quebrada-card border border-quebrada-border rounded-2xl p-4">
+                            <span class="text-xs font-bold text-gray-400 uppercase">Total de Pedidos</span>
+                            <div id="stat-pedidos-total" class="font-display text-2xl sm:text-3xl text-white mt-1">0</div>
+                        </div>
+                        <div class="bg-quebrada-card border border-quebrada-orange/50 rounded-2xl p-4">
+                            <span class="text-xs font-bold text-quebrada-orange uppercase">Pendentes</span>
+                            <div id="stat-pedidos-pendente" class="font-display text-2xl sm:text-3xl text-quebrada-orange mt-1">0</div>
+                        </div>
+                        <div class="bg-quebrada-card border border-quebrada-yellow/50 rounded-2xl p-4">
+                            <span class="text-xs font-bold text-quebrada-yellow uppercase">Em Atendimento</span>
+                            <div id="stat-pedidos-andamento" class="font-display text-2xl sm:text-3xl text-quebrada-yellow mt-1">0</div>
+                        </div>
+                        <div class="bg-quebrada-card border border-emerald-500/50 rounded-2xl p-4">
+                            <span class="text-xs font-bold text-emerald-400 uppercase">Concluídos</span>
+                            <div id="stat-pedidos-concluido" class="font-display text-2xl sm:text-3xl text-emerald-400 mt-1">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Lista Dinâmica de Pedidos -->
+                    <div id="pedidos-list-container" class="space-y-4"></div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- =========================================================
+         RODAPÉ COM FRASE DO INSTAGRAM
+    ========================================================== -->
+    <footer class="bg-quebrada-card border-t-2 border-quebrada-border mt-12">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+            <!-- Banner Frase Instagram -->
+            <div class="bg-gradient-to-r from-quebrada-orange to-quebrada-yellow rounded-2xl p-6 sm:p-8 text-black mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div>
+                    <span class="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider bg-black/15 px-3 py-1 rounded-full mb-2">
+                        <i class="fa-brands fa-instagram"></i> Compartilhe na Quebrada
+                    </span>
+                    <p class="font-display text-xl sm:text-2xl leading-snug">
+                        "Não espere o mundo mudar. Mude o dia de alguém hoje. Ajuda Agora - Quebrada."
+                    </p>
+                </div>
+                <button onclick="copyInstaQuote()" class="px-5 py-3.5 rounded-xl bg-black text-white hover:bg-neutral-900 font-black text-sm uppercase shrink-0 flex items-center gap-2 transition-transform active:scale-95">
+                    <i class="fa-regular fa-copy text-quebrada-yellow"></i>
+                    <span>Copiar Frase</span>
+                </button>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-400">
+                <div class="flex items-center gap-2">
+                    <span class="font-display text-white">AJUDA AGORA - QUEBRADA</span>
+                    <span>•</span>
+                    <span>Quem precisa não pode esperar.</span>
+                </div>
+                <div class="flex flex-wrap justify-center gap-4 font-bold">
+                    <button onclick="navigateTo('home')" class="hover:text-quebrada-yellow">Início</button>
+                    <button onclick="navigateTo('sos')" class="hover:text-quebrada-orange">SOS Urgente</button>
+                    <button onclick="navigateTo('sonhos')" class="hover:text-quebrada-yellow">Adote um Sonho</button>
+                    <button onclick="navigateTo('transparencia')" class="hover:text-quebrada-yellow">Transparência</button>
+                    <button onclick="navigateTo('participar')" class="hover:text-white">Ajudar/Pedir</button>
+                    <button onclick="navigateTo('pedidos')" class="hover:text-quebrada-orange flex items-center gap-1"><i class="fa-solid fa-lock text-xs"></i>Pedidos</button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- =========================================================
+         MODAL RÁPIDO DE DOAÇÃO VIA PIX
+    ========================================================== -->
+    <div id="pix-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
+        <div class="bg-quebrada-card border-2 border-quebrada-orange rounded-3xl max-w-md w-full p-6 sm:p-7 relative shadow-2xl animate-[fadeIn_0.2s_ease-out]">
+            <button onclick="closePixModal()" class="absolute top-4 right-4 w-10 h-10 rounded-xl bg-quebrada-black text-gray-300 hover:text-white flex items-center justify-center border border-quebrada-border" aria-label="Fechar">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-quebrada-orange text-black font-black text-xs uppercase mb-3">
+                <i class="fa-solid fa-pix"></i> Doação Direta via Pix
+            </div>
+            <h3 id="modal-target-title" class="font-display text-2xl text-white leading-tight mb-1">Dona Maria</h3>
+            <p id="modal-target-desc" class="text-sm text-gray-300 mb-4">2 cestas básicas e remédio de pressão</p>
+
+            <!-- QR Code Ilustrativo em SVG -->
+            <div class="bg-white p-4 rounded-2xl w-44 h-44 mx-auto mb-4 flex items-center justify-center shadow-inner">
+                <svg viewBox="0 0 100 100" class="w-full h-full text-black" fill="currentColor">
+                    <!-- Cantos típicos de QR Code -->
+                    <path d="M5,5 h25 v25 h-25 z M10,10 v15 h15 v-15 z M14,14 h7 v7 h-7 z"/>
+                    <path d="M70,5 h25 v25 h-25 z M75,10 v15 h15 v-15 z M79,14 h7 v7 h-7 z"/>
+                    <path d="M5,70 h25 v25 h-25 z M10,75 v15 h15 v-15 z M14,79 h7 v7 h-7 z"/>
+                    <!-- Padrão interno -->
+                    <rect x="36" y="8" width="6" height="6"/><rect x="48" y="8" width="6" height="12"/><rect x="60" y="14" width="6" height="6"/>
+                    <rect x="36" y="22" width="12" height="6"/><rect x="54" y="26" width="10" height="6"/>
+                    <rect x="8" y="36" width="12" height="6"/><rect x="26" y="36" width="6" height="12"/><rect x="38" y="42" width="18" height="6"/>
+                    <rect x="62" y="38" width="6" height="14"/><rect x="76" y="36" width="16" height="6"/><rect x="82" y="48" width="10" height="6"/>
+                    <rect x="10" y="52" width="10" height="10"/><rect x="36" y="56" width="8" height="8"/><rect x="50" y="54" width="14" height="6"/>
+                    <rect x="70" y="60" width="8" height="12"/><rect x="86" y="62" width="8" height="8"/>
+                    <rect x="36" y="72" width="6" height="18"/><rect x="48" y="70" width="12" height="6"/><rect x="48" y="84" width="16" height="8"/>
+                    <rect x="72" y="78" width="10" height="14"/><rect x="86" y="82" width="8" height="10"/>
+                </svg>
+            </div>
+
+            <div class="text-center mb-4">
+                <span id="modal-target-value" class="inline-block px-3 py-1 rounded-lg bg-quebrada-yellow/15 border border-quebrada-yellow text-quebrada-yellow font-black text-sm">
+                    Falta R$ 50
+                </span>
+            </div>
+
+            <!-- Chave Pix Copiável -->
+            <div class="bg-quebrada-black border border-quebrada-border rounded-xl p-3 mb-4 flex items-center justify-between gap-2">
+                <span class="font-mono text-xs sm:text-sm text-white truncate">ajudaagora.quebrada@pix.com.br</span>
+                <button onclick="copyPixKey()" class="px-3 py-2 rounded-lg bg-quebrada-yellow text-black font-black text-xs uppercase shrink-0 hover:bg-quebrada-yellowHover">
+                    Copiar Pix
+                </button>
+            </div>
+
+            <p class="text-xs text-gray-400 text-center">
+                Após transferir, o valor entra na barra em tempo real e o comprovante sai na aba <strong>Transparência</strong>.
+            </p>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         MODAL DE COMPROVANTE / TRANSPARÊNCIA
+    ========================================================== -->
+    <div id="receipt-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
+        <div class="bg-quebrada-card border-2 border-quebrada-yellow rounded-3xl max-w-md w-full p-6 sm:p-7 relative shadow-2xl">
+            <button onclick="closeReceiptModal()" class="absolute top-4 right-4 w-10 h-10 rounded-xl bg-quebrada-black text-gray-300 hover:text-white flex items-center justify-center border border-quebrada-border" aria-label="Fechar">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-400 text-black font-black text-xs uppercase mb-3">
+                <i class="fa-solid fa-shield-halved"></i> Prestação de Contas Verificada
+            </div>
+            <h3 id="receipt-title" class="font-display text-xl text-white mb-2">Dona Francisca</h3>
+            
+            <div class="bg-quebrada-black border border-quebrada-border rounded-2xl p-4 space-y-2.5 mb-4 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Item entregue:</span>
+                    <span id="receipt-item" class="font-bold text-white text-right">Botijão de gás</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Valor pago:</span>
+                    <span id="receipt-value" class="font-black text-quebrada-yellow">R$ 180,00</span>
+                </div>
+                <div class="pt-2 border-t border-quebrada-border">
+                    <span class="text-gray-400 block text-xs uppercase font-bold mb-1">Registro da Entrega:</span>
+                    <p id="receipt-note" class="text-gray-200 text-sm leading-relaxed"></p>
+                </div>
+            </div>
+
+            <button onclick="closeReceiptModal()" class="w-full py-3.5 rounded-xl bg-quebrada-yellow text-black font-black text-sm uppercase">
+                Fechar Comprovante
+            </button>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         JAVASCRIPT - NAVEGAÇÃO SPA, CLIPBOARD E FORMULÁRIOS
+    ========================================================== -->
+    <script>
+        const PEDIDOS_STORAGE_KEY = 'ajuda_agora_quebrada_pedidos_v1';
+        const PEDIDOS_AUTH_KEY = 'ajuda_agora_quebrada_auth_v1';
+        const REQUIRED_LOGIN = 'sosajuda';
+        const REQUIRED_PASS = 'ajudasos';
+
+        let currentAttachedPhotoData = '';
+
+        function getDefaultSamplePedidos() {
+            return [
+                {
+                    id: 'req-exemplo-1',
+                    name: 'Seu José, 65 anos',
+                    whatsapp: '(11) 98765-4321',
+                    description: 'Acabou o gás de cozinha e precisa de 1 cesta básica. Mora perto do ponto final de ônibus.',
+                    category: 'SOS URGENTE',
+                    photoData: '',
+                    photoName: '',
+                    createdAt: 'Hoje • 07:15',
+                    status: 'Pendente'
+                },
+                {
+                    id: 'req-exemplo-2',
+                    name: 'Camila, 19 anos',
+                    whatsapp: '(11) 97654-3210',
+                    description: 'Precisa de ajuda com passagem de ônibus por 2 semanas para ir a entrevistas e cursos gratuitos.',
+                    category: 'ADOTE UM SONHO',
+                    photoData: '',
+                    photoName: '',
+                    createdAt: 'Ontem • 19:40',
+                    status: 'Em atendimento'
+                }
+            ];
+        }
+
+        function loadPedidos() {
+            try {
+                const raw = localStorage.getItem(PEDIDOS_STORAGE_KEY);
+                if (raw === null) {
+                    const initial = getDefaultSamplePedidos();
+                    savePedidos(initial);
+                    return initial;
+                }
+                const parsed = JSON.parse(raw);
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (err) {
+                return getDefaultSamplePedidos();
+            }
+        }
+
+        function savePedidos(list) {
+            try {
+                localStorage.setItem(PEDIDOS_STORAGE_KEY, JSON.stringify(list));
+            } catch (err) {
+                showToast('Atenção: foto muito grande para salvar no navegador. Pedido exibido na sessão.');
+            }
+        }
+
+        function isPedidosAuthenticated() {
+            try {
+                return sessionStorage.getItem(PEDIDOS_AUTH_KEY) === 'true';
+            } catch (err) {
+                return false;
+            }
+        }
+
+        function setPedidosAuthenticated(auth) {
+            try {
+                if (auth) {
+                    sessionStorage.setItem(PEDIDOS_AUTH_KEY, 'true');
+                } else {
+                    sessionStorage.removeItem(PEDIDOS_AUTH_KEY);
+                }
+            } catch (err) {
+                // Ignora bloqueio de storage em modo privado restrito
+            }
+        }
+
+        function syncPedidosViewState() {
+            const loginScreen = document.getElementById('pedidos-login-screen');
+            const dashScreen = document.getElementById('pedidos-dashboard-screen');
+            if (!loginScreen || !dashScreen) return;
+
+            if (isPedidosAuthenticated()) {
+                loginScreen.classList.add('hidden');
+                dashScreen.classList.remove('hidden');
+                renderPedidosDashboard();
+            } else {
+                dashScreen.classList.add('hidden');
+                loginScreen.classList.remove('hidden');
+            }
+        }
+
+        function handlePedidosLogin(event) {
+            event.preventDefault();
+            const userInput = document.getElementById('login-user').value.trim();
+            const passInput = document.getElementById('login-pass').value;
+            const errorMsg = document.getElementById('login-error-msg');
+
+            if (userInput === REQUIRED_LOGIN && passInput === REQUIRED_PASS) {
+                errorMsg.classList.add('hidden');
+                setPedidosAuthenticated(true);
+                document.getElementById('login-pass').value = '';
+                showToast('Acesso liberado à Central de Pedidos.');
+                syncPedidosViewState();
+            } else {
+                errorMsg.classList.remove('hidden');
+                showToast('Login ou senha inválidos.');
+            }
+        }
+
+        function logoutPedidos() {
+            setPedidosAuthenticated(false);
+            const passInput = document.getElementById('login-pass');
+            if (passInput) passInput.value = '';
+            syncPedidosViewState();
+            showToast('Você saiu da aba restrita.');
+        }
+
+        function buildWhatsAppUrl(phone, personName, category) {
+            const digits = String(phone || '').replace(/\D/g, '');
+            const internationalNumber = digits.startsWith('55') ? digits : (digits ? '55' + digits : '');
+            const text = encodeURIComponent(`Olá ${personName}, aqui é da equipe AJUDA AGORA - QUEBRADA! Recebemos seu pedido (${category}) e estamos entrando em contato.`);
+            return internationalNumber
+                ? `https://wa.me/${internationalNumber}?text=${text}`
+                : `https://wa.me/?text=${text}`;
+        }
+
+        function escapeHtml(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function renderPedidosDashboard() {
+            const list = loadPedidos();
+            const container = document.getElementById('pedidos-list-container');
+            if (!container) return;
+
+            const totalEl = document.getElementById('stat-pedidos-total');
+            const pendEl = document.getElementById('stat-pedidos-pendente');
+            const andEl = document.getElementById('stat-pedidos-andamento');
+            const concEl = document.getElementById('stat-pedidos-concluido');
+
+            const pendentes = list.filter(item => item.status === 'Pendente').length;
+            const andamento = list.filter(item => item.status === 'Em atendimento').length;
+            const concluidos = list.filter(item => item.status === 'Concluído').length;
+
+            if (totalEl) totalEl.textContent = list.length;
+            if (pendEl) pendEl.textContent = pendentes;
+            if (andEl) andEl.textContent = andamento;
+            if (concEl) concEl.textContent = concluidos;
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-quebrada-card border border-quebrada-border rounded-3xl p-8 text-center">
+                        <i class="fa-solid fa-inbox text-4xl text-gray-500 mb-3"></i>
+                        <h3 class="font-display text-xl text-white mb-1">Nenhum pedido na lista no momento</h3>
+                        <p class="text-sm text-gray-400">Quando alguém preencher o formulário "Preciso de Ajuda", o pedido aparecerá aqui.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = list.map(item => {
+                const isUrgent = item.category === 'SOS URGENTE';
+                const badgeClass = isUrgent
+                    ? 'bg-quebrada-orange text-black'
+                    : 'bg-quebrada-yellow text-black';
+                const waUrl = buildWhatsAppUrl(item.whatsapp, item.name, item.category);
+                const photoBlock = item.photoData
+                    ? `<div class="mt-4">
+                           <span class="text-xs font-black uppercase text-gray-400 block mb-1.5">Foto enviada:</span>
+                           <img src="${item.photoData}" alt="Foto enviada por ${escapeHtml(item.name)}" class="w-full max-w-xs h-44 object-cover rounded-2xl border border-quebrada-yellow/60">
+                       </div>`
+                    : `<p class="mt-3 text-xs text-gray-400"><i class="fa-regular fa-image mr-1"></i>Sem foto anexada</p>`;
+
+                return `
+                    <article class="bg-quebrada-card border-2 ${isUrgent ? 'border-quebrada-orange/70' : 'border-quebrada-yellow/70'} rounded-3xl p-5 sm:p-6 shadow-lg">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-quebrada-border">
+                            <div class="flex flex-wrap items-center gap-2.5">
+                                <span class="px-3 py-1 rounded-lg ${badgeClass} font-black text-xs uppercase">${escapeHtml(item.category)}</span>
+                                <h3 class="font-display text-xl text-white">${escapeHtml(item.name)}</h3>
+                            </div>
+                            <span class="text-xs font-bold text-gray-400"><i class="fa-regular fa-clock mr-1 text-quebrada-yellow"></i>${escapeHtml(item.createdAt)}</span>
+                        </div>
+
+                        <div class="mt-4 space-y-2">
+                            <div class="flex flex-wrap items-center gap-3 text-sm">
+                                <span class="font-extrabold text-gray-300"><i class="fa-brands fa-whatsapp text-emerald-400 mr-1"></i>WhatsApp: <strong class="text-white">${escapeHtml(item.whatsapp)}</strong></span>
+                                <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-500/20 border border-emerald-400/60 text-emerald-300 hover:bg-emerald-500 hover:text-black font-extrabold text-xs uppercase transition-colors">
+                                    <i class="fa-brands fa-whatsapp"></i>
+                                    <span>Chamar no WhatsApp</span>
+                                </a>
+                            </div>
+
+                            <div class="bg-quebrada-black border border-quebrada-border rounded-2xl p-4 mt-3">
+                                <span class="text-[11px] font-black uppercase text-gray-400 block mb-1">O que precisa:</span>
+                                <p class="text-base text-white font-semibold leading-relaxed">${escapeHtml(item.description)}</p>
+                            </div>
+
+                            ${photoBlock}
+                        </div>
+
+                        <div class="mt-5 pt-4 border-t border-quebrada-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-center gap-2.5">
+                                <label for="status-${escapeHtml(item.id)}" class="text-xs font-black uppercase text-gray-300">Status:</label>
+                                <select id="status-${escapeHtml(item.id)}" onchange="updatePedidoStatus('${escapeHtml(item.id)}', this.value)" class="px-3.5 py-2 rounded-xl bg-quebrada-black border border-quebrada-border text-white text-sm font-extrabold focus:outline-none focus:border-quebrada-yellow">
+                                    <option value="Pendente" ${item.status === 'Pendente' ? 'selected' : ''}>Pendente</option>
+                                    <option value="Em atendimento" ${item.status === 'Em atendimento' ? 'selected' : ''}>Em atendimento</option>
+                                    <option value="Concluído" ${item.status === 'Concluído' ? 'selected' : ''}>Concluído</option>
+                                </select>
+                            </div>
+
+                            <button type="button" onclick="deletePedido('${escapeHtml(item.id)}')" class="px-4 py-2 rounded-xl bg-quebrada-black hover:bg-red-950/80 text-red-300 border border-red-500/40 font-extrabold text-xs uppercase transition-colors self-start sm:self-auto flex items-center gap-1.5">
+                                <i class="fa-solid fa-trash"></i>
+                                <span>Excluir Pedido</span>
+                            </button>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        function updatePedidoStatus(id, newStatus) {
+            const list = loadPedidos();
+            const updated = list.map(item => item.id === id ? { ...item, status: newStatus } : item);
+            savePedidos(updated);
+            renderPedidosDashboard();
+            showToast('Status atualizado para: ' + newStatus);
+        }
+
+        function deletePedido(id) {
+            const list = loadPedidos();
+            const filtered = list.filter(item => item.id !== id);
+            savePedidos(filtered);
+            renderPedidosDashboard();
+            showToast('Pedido removido da lista.');
+        }
+
+        function clearAllPedidos() {
+            savePedidos([]);
+            renderPedidosDashboard();
+            showToast('Todos os pedidos foram removidos.');
+        }
+
+        // Navegação entre as páginas da SPA
+        function navigateTo(pageId, subTab = null) {
+            // Esconde todas as seções
+            document.querySelectorAll('.page-section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+
+            // Mostra a seção desejada
+            const target = document.getElementById('page-' + pageId);
+            if (target) {
+                target.classList.add('active');
+            }
+
+            // Atualiza estado ativo nos botões Desktop
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                const navTarget = btn.getAttribute('data-nav');
+                if (navTarget === pageId) {
+                    if (pageId === 'transparencia') {
+                        btn.className = 'nav-btn px-3.5 py-2.5 rounded-xl text-sm font-black bg-quebrada-yellow text-black transition-all flex items-center gap-1.5';
+                    } else if (pageId === 'pedidos') {
+                        btn.className = 'nav-btn px-3.5 py-2.5 rounded-xl text-sm font-black bg-quebrada-orange text-black transition-all flex items-center gap-1.5 ml-1';
+                    } else {
+                        btn.className = 'nav-btn px-3.5 py-2.5 rounded-xl text-sm font-black bg-quebrada-orange text-black transition-all flex items-center gap-1.5';
+                    }
+                } else {
+                    if (navTarget === 'transparencia') {
+                        btn.className = 'nav-btn px-3.5 py-2.5 rounded-xl text-sm font-extrabold text-quebrada-yellow border border-quebrada-yellow/40 hover:bg-quebrada-yellow hover:text-black transition-all flex items-center gap-1.5';
+                    } else if (navTarget === 'participar') {
+                        btn.className = 'nav-btn px-4 py-2.5 rounded-xl text-sm font-black bg-white text-black hover:bg-quebrada-yellow transition-all ml-1';
+                    } else if (navTarget === 'pedidos') {
+                        btn.className = 'nav-btn px-3.5 py-2.5 rounded-xl text-sm font-extrabold text-gray-300 border border-quebrada-border hover:border-quebrada-orange hover:text-quebrada-orange transition-all flex items-center gap-1.5 ml-1';
+                    } else {
+                        btn.className = 'nav-btn px-3.5 py-2.5 rounded-xl text-sm font-extrabold text-gray-200 hover:bg-quebrada-card hover:text-quebrada-orange transition-all flex items-center gap-1.5';
+                    }
+                }
+            });
+
+            if (pageId === 'pedidos') {
+                syncPedidosViewState();
+            }
+
+            // Se navegou para a página de formulários com aba específica
+            if (pageId === 'participar' && subTab) {
+                switchFormTab(subTab);
+            }
+
+            // Rola suavemente para o topo
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Toggle Menu Mobile
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('mobile-menu-icon');
+            const isHidden = menu.classList.contains('hidden');
+            
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-xmark');
+            } else {
+                menu.classList.add('hidden');
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-bars');
+            }
+        }
+
+        // Alterna abas dos formulários em telas menores
+        function switchFormTab(tab) {
+            const boxAjudar = document.getElementById('form-box-ajudar');
+            const boxPreciso = document.getElementById('form-box-preciso');
+            const btnAjudar = document.getElementById('tab-btn-ajudar');
+            const btnPreciso = document.getElementById('tab-btn-preciso');
+
+            if (tab === 'ajudar') {
+                boxAjudar.classList.remove('hidden');
+                boxPreciso.classList.add('hidden', 'lg:block');
+                btnAjudar.className = 'py-3 px-4 rounded-xl font-black text-sm uppercase bg-quebrada-orange text-black transition-all';
+                btnPreciso.className = 'py-3 px-4 rounded-xl font-black text-sm uppercase text-gray-300 transition-all';
+            } else {
+                boxPreciso.classList.remove('hidden');
+                boxAjudar.classList.add('hidden', 'lg:block');
+                btnPreciso.className = 'py-3 px-4 rounded-xl font-black text-sm uppercase bg-quebrada-yellow text-black transition-all';
+                btnAjudar.className = 'py-3 px-4 rounded-xl font-black text-sm uppercase text-gray-300 transition-all';
+            }
+        }
+
+        // Função de Notificação Toast (Sem alert)
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast-notification');
+            const msgEl = document.getElementById('toast-message');
+            msgEl.textContent = message;
+
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3400);
+        }
+
+        // Copiar texto para área de transferência (Compatível com iframes)
+        function copyToClipboard(text, successMsg) {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            try {
+                document.execCommand('copy');
+                showToast(successMsg);
+            } catch (err) {
+                showToast('Chave: ' + text);
+            }
+            document.body.removeChild(tempInput);
+        }
+
+        function copyPixKey() {
+            copyToClipboard('ajudaagora.quebrada@pix.com.br', 'Chave Pix copiada! Cole no app do seu banco.');
+        }
+
+        function copyInstaQuote() {
+            copyToClipboard('Não espere o mundo mudar. Mude o dia de alguém hoje. Ajuda Agora - Quebrada.', 'Frase do Instagram copiada!');
+        }
+
+        // Modal de Doação Pix
+        function openPixModal(title, desc, valueText) {
+            document.getElementById('modal-target-title').textContent = title;
+            document.getElementById('modal-target-desc').textContent = desc;
+            document.getElementById('modal-target-value').textContent = valueText;
+            const modal = document.getElementById('pix-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closePixModal() {
+            const modal = document.getElementById('pix-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Modal de Comprovante de Transparência
+        function openReceiptModal(title, item, value, note) {
+            document.getElementById('receipt-title').textContent = title;
+            document.getElementById('receipt-item').textContent = item;
+            document.getElementById('receipt-value').textContent = value;
+            document.getElementById('receipt-note').textContent = note;
+            const modal = document.getElementById('receipt-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeReceiptModal() {
+            const modal = document.getElementById('receipt-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Preview da foto no formulário "Preciso de Ajuda"
+        function previewPhoto(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                currentAttachedPhotoData = e.target.result || '';
+                document.getElementById('photo-preview-img').src = currentAttachedPhotoData;
+                document.getElementById('photo-preview-box').classList.remove('hidden');
+                document.getElementById('photo-label-text').textContent = file.name;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearPhoto() {
+            currentAttachedPhotoData = '';
+            document.getElementById('need-photo').value = '';
+            document.getElementById('photo-preview-box').classList.add('hidden');
+            document.getElementById('photo-label-text').textContent = 'Toque para escolher ou tirar foto';
+        }
+
+        // Envio do Formulário "Quero Ajudar"
+        function handleHelperSubmit(event) {
+            event.preventDefault();
+            const name = document.getElementById('helper-name').value.trim();
+            const amount = document.getElementById('helper-amount').value;
+            const checked = Array.from(document.querySelectorAll('input[name="helpType"]:checked')).map(el => el.value);
+            const ways = checked.length > 0 ? checked.join(', ') : 'Apoio geral';
+
+            const confirmBox = document.getElementById('helper-confirmation');
+            const confirmText = document.getElementById('helper-confirmation-text');
+            confirmText.textContent = `Valeu, ${name}! Registramos seu interesse (${ways} • ${amount}). Nossa equipe vai te chamar no WhatsApp ainda hoje.`;
+            confirmBox.classList.remove('hidden');
+            showToast('Cadastro recebido! Obrigado por fortalecer.');
+            event.target.reset();
+        }
+
+        // Envio do Formulário "Preciso de Ajuda"
+        function handleNeedSubmit(event) {
+            event.preventDefault();
+            const name = document.getElementById('need-name').value.trim();
+            const whatsapp = document.getElementById('need-whatsapp').value.trim();
+            const description = document.getElementById('need-description').value.trim();
+            const category = document.querySelector('input[name="needCategory"]:checked').value;
+            const photoFile = document.getElementById('need-photo').files[0];
+
+            const now = new Date();
+            const horaStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            const dataStr = now.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+
+            const newPedido = {
+                id: 'req-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+                name,
+                whatsapp,
+                description,
+                category,
+                photoData: currentAttachedPhotoData,
+                photoName: photoFile ? photoFile.name : '',
+                createdAt: `${dataStr} • ${horaStr}`,
+                status: 'Pendente'
+            };
+
+            const existingList = loadPedidos();
+            existingList.unshift(newPedido);
+            savePedidos(existingList);
+
+            if (isPedidosAuthenticated()) {
+                renderPedidosDashboard();
+            }
+
+            const confirmBox = document.getElementById('need-confirmation');
+            const confirmText = document.getElementById('need-confirmation-text');
+            confirmText.textContent = `${name}, seu pedido foi salvo na aba restrita de Pedidos de Ajuda (${category}). Nossa equipe vai te chamar no WhatsApp para confirmar os detalhes.`;
+            confirmBox.classList.remove('hidden');
+            clearPhoto();
+            showToast('Pedido salvo! Já disponível na aba Pedidos de Ajuda.');
+            event.target.reset();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPedidos();
+            syncPedidosViewState();
+        });
+    </script>
+</body>
+</html>
